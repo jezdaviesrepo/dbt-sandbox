@@ -1,0 +1,349 @@
+version: 2
+
+models:
+  - name: stg_customer
+    description: >
+      Staged customer data prepared for Data Vault 2.1 loading into REIGATE_MESH.
+      This model computes all hash keys, link hash keys and hashdiffs required 
+      for the raw vault layer. Source data is read directly from REDHILL.PUBLIC.CUSTOMER
+      with no filtering or transformation applied to the payload columns.
+      Feeds HUB_CUSTOMER, LNK_CUSTOMER_NATION and SAT_CUSTOMER.
+    columns:
+      - name: CUSTOMER_HK
+        description: >
+          MD5 hash key derived from C_CUSTKEY. Serves as the primary key 
+          for HUB_CUSTOMER in the raw vault. Single column hash using the 
+          natural key of the customer entity.
+      - name: CUSTOMER_NATION_LHK
+        description: >
+          MD5 link hash key derived from the combination of C_CUSTKEY and 
+          C_NATIONKEY. Used as the primary key for LNK_CUSTOMER_NATION. 
+          Represents the relationship between a customer and their nation.
+      - name: CUSTOMER_HASHDIFF
+        description: >
+          MD5 hashdiff computed across all descriptive attributes of the 
+          customer record: C_NAME, C_ADDRESS, C_PHONE, C_ACCTBAL, 
+          C_MKTSEGMENT and C_COMMENT. Used by SAT_CUSTOMER to detect 
+          changes and drive satellite inserts. A change in any of these 
+          columns will produce a new hashdiff value.
+      - name: LOAD_DATE
+        description: >
+          Timestamp recording when the record was loaded into the staging 
+          layer. Generated using CURRENT_TIMESTAMP() at load time. Used 
+          as the load date stamp (LDTS) across all raw vault entities 
+          fed by this staging model.
+      - name: RECORD_SOURCE
+        description: >
+          Identifies the source system that provided this record. Fixed 
+          value of REDHILL.PUBLIC.CUSTOMER. Used as the record source 
+          (RSRC) across all raw vault entities fed by this staging model.
+      - name: C_CUSTKEY
+        description: >
+          Natural key for the customer from the source system. Unique 
+          integer identifier. Carried through from the source unchanged 
+          and used as the input to CUSTOMER_HK hashing.
+      - name: C_NAME
+        description: >
+          Full name of the customer as recorded in the source system. 
+          Format is Customer#XXXXXXXXX. Payload column carried into 
+          SAT_CUSTOMER. Included in CUSTOMER_HASHDIFF.
+      - name: C_ADDRESS
+        description: >
+          Street address of the customer. Free text field from the source 
+          system. Payload column carried into SAT_CUSTOMER. Included 
+          in CUSTOMER_HASHDIFF.
+      - name: C_NATIONKEY
+        description: >
+          Foreign key to the nation in the source system. Integer value 
+          corresponding to N_NATIONKEY. Used as input to 
+          CUSTOMER_NATION_LHK alongside C_CUSTKEY.
+      - name: C_PHONE
+        description: >
+          Customer contact phone number in format XX-XXX-XXX-XXXX. 
+          Payload column carried into SAT_CUSTOMER. Included in 
+          CUSTOMER_HASHDIFF.
+      - name: C_ACCTBAL
+        description: >
+          Current account balance for the customer in USD. Can be negative. 
+          Payload column carried into SAT_CUSTOMER. Included in 
+          CUSTOMER_HASHDIFF.
+      - name: C_MKTSEGMENT
+        description: >
+          Market segment the customer belongs to. Values: AUTOMOBILE, 
+          BUILDING, FURNITURE, MACHINERY, HOUSEHOLD. Payload column 
+          carried into SAT_CUSTOMER. Included in CUSTOMER_HASHDIFF.
+      - name: C_COMMENT
+        description: >
+          Free text comment field from the source system. Payload column 
+          carried into SAT_CUSTOMER. Included in CUSTOMER_HASHDIFF.
+
+  - name: stg_nation
+    description: >
+      Staged nation reference data prepared for Data Vault 2.1 loading 
+      into REIGATE_MESH. This model computes all hash keys and hashdiffs 
+      required for the raw vault layer. Source data is read directly from 
+      REDHILL.PUBLIC.NATION with no filtering or transformation applied 
+      to the payload columns. Feeds HUB_NATION and SAT_NATION.
+    columns:
+      - name: NATION_HK
+        description: >
+          MD5 hash key derived from N_NATIONKEY. Serves as the primary 
+          key for HUB_NATION in the raw vault. Single column hash using 
+          the natural key of the nation entity.
+      - name: NATION_HASHDIFF
+        description: >
+          MD5 hashdiff computed across all descriptive attributes of the 
+          nation record: N_NAME and N_COMMENT. Used by SAT_NATION to 
+          detect changes and drive satellite inserts. Nation data is 
+          relatively static but any change will produce a new hashdiff.
+      - name: LOAD_DATE
+        description: >
+          Timestamp recording when the record was loaded into the staging 
+          layer. Generated using CURRENT_TIMESTAMP() at load time. Used 
+          as the load date stamp (LDTS) across all raw vault entities 
+          fed by this staging model.
+      - name: RECORD_SOURCE
+        description: >
+          Identifies the source system that provided this record. Fixed 
+          value of REDHILL.PUBLIC.NATION. Used as the record source 
+          (RSRC) across all raw vault entities fed by this staging model.
+      - name: N_NATIONKEY
+        description: >
+          Natural key for the nation from the source system. Integer 
+          between 0 and 24. Carried through from the source unchanged 
+          and used as the input to NATION_HK hashing.
+      - name: N_NAME
+        description: >
+          Full name of the nation in uppercase. Examples: ALGERIA, 
+          ARGENTINA, BRAZIL. Payload column carried into SAT_NATION. 
+          Included in NATION_HASHDIFF.
+      - name: N_REGIONKEY
+        description: >
+          Foreign key to the REGION table. Links the nation to one of 
+          5 geographic regions. Carried through as a payload column 
+          into SAT_NATION. Not included in NATION_HASHDIFF as it is 
+          a relational key.
+      - name: N_COMMENT
+        description: >
+          Free text comment describing the nation from the source system. 
+          Payload column carried into SAT_NATION. Included in 
+          NATION_HASHDIFF.
+
+  - name: stg_orders
+    description: >
+      Staged orders data prepared for Data Vault 2.1 loading into 
+      REIGATE_MESH. Computes hash keys, link hash keys and hashdiffs 
+      for the raw vault layer. Source data read from REDHILL.PUBLIC.ORDERS. 
+      Feeds HUB_ORDER, LNK_ORDER_CUSTOMER and SAT_ORDER.
+    columns:
+      - name: ORDER_HK
+        description: >
+          MD5 hash key derived from O_ORDERKEY. Serves as the primary 
+          key for HUB_ORDER in the raw vault.
+      - name: CUSTOMER_HK
+        description: >
+          MD5 hash key derived from O_CUSTKEY. Foreign hash key used 
+          in LNK_ORDER_CUSTOMER to link orders to customers.
+      - name: ORDER_CUSTOMER_LHK
+        description: >
+          MD5 link hash key derived from the combination of O_ORDERKEY 
+          and O_CUSTKEY. Primary key for LNK_ORDER_CUSTOMER.
+      - name: ORDER_HASHDIFF
+        description: >
+          MD5 hashdiff computed across all descriptive attributes of 
+          the order: O_ORDERSTATUS, O_TOTALPRICE, O_ORDERDATE, 
+          O_ORDERPRIORITY, O_CLERK, O_SHIPPRIORITY and O_COMMENT. 
+          Used by SAT_ORDER to detect changes.
+      - name: LOAD_DATE
+        description: "Timestamp when the record was loaded into staging."
+      - name: RECORD_SOURCE
+        description: "Fixed value of REDHILL.PUBLIC.ORDERS."
+      - name: O_ORDERKEY
+        description: "Natural key for the order. Input to ORDER_HK."
+      - name: O_CUSTKEY
+        description: "Foreign key to customer. Input to CUSTOMER_HK and ORDER_CUSTOMER_LHK."
+      - name: O_ORDERSTATUS
+        description: "Order status: O=Open, F=Fulfilled, P=In Progress."
+      - name: O_TOTALPRICE
+        description: "Total order value in USD. Included in ORDER_HASHDIFF."
+      - name: O_ORDERDATE
+        description: "Date the order was placed."
+      - name: O_ORDERPRIORITY
+        description: "Priority of the order. Values: 1-URGENT through 5-LOW."
+      - name: O_CLERK
+        description: "Clerk who processed the order."
+      - name: O_SHIPPRIORITY
+        description: "Shipping priority flag."
+      - name: O_COMMENT
+        description: "Free text comment from source."
+
+  - name: stg_lineitem
+    description: >
+      Staged line item data prepared for Data Vault 2.1 loading. Most 
+      granular staging model. Source data read from REDHILL.PUBLIC.LINEITEM. 
+      Feeds HUB_LINEITEM, LNK_LINEITEM and SAT_LINEITEM.
+    columns:
+      - name: LINEITEM_HK
+        description: >
+          MD5 hash key derived from the composite of L_ORDERKEY and 
+          L_LINENUMBER. Primary key for HUB_LINEITEM.
+      - name: ORDER_HK
+        description: "MD5 hash of L_ORDERKEY. Foreign hash key for LNK_LINEITEM."
+      - name: PART_HK
+        description: "MD5 hash of L_PARTKEY. Foreign hash key for LNK_LINEITEM."
+      - name: SUPPLIER_HK
+        description: "MD5 hash of L_SUPPKEY. Foreign hash key for LNK_LINEITEM."
+      - name: LINEITEM_HASHDIFF
+        description: >
+          MD5 hashdiff across all descriptive line item attributes. 
+          Used by SAT_LINEITEM to detect changes.
+      - name: LOAD_DATE
+        description: "Timestamp when the record was loaded into staging."
+      - name: RECORD_SOURCE
+        description: "Fixed value of REDHILL.PUBLIC.LINEITEM."
+      - name: L_ORDERKEY
+        description: "Foreign key to orders. Part of composite natural key."
+      - name: L_PARTKEY
+        description: "Foreign key to part."
+      - name: L_SUPPKEY
+        description: "Foreign key to supplier."
+      - name: L_LINENUMBER
+        description: "Position of line item within the order. Part of composite natural key."
+      - name: L_QUANTITY
+        description: "Units ordered. Included in LINEITEM_HASHDIFF."
+      - name: L_EXTENDEDPRICE
+        description: "Gross price before discounts. Included in LINEITEM_HASHDIFF."
+      - name: L_DISCOUNT
+        description: "Discount as decimal 0.00-0.10. Included in LINEITEM_HASHDIFF."
+      - name: L_TAX
+        description: "Tax rate as decimal 0.00-0.08. Included in LINEITEM_HASHDIFF."
+      - name: L_RETURNFLAG
+        description: "Return flag: R=Returned, A=Accepted, N=Not applicable."
+      - name: L_LINESTATUS
+        description: "Line status: O=Open, F=Fulfilled."
+      - name: L_SHIPDATE
+        description: "Date item was shipped."
+      - name: L_COMMITDATE
+        description: "Committed delivery date."
+      - name: L_RECEIPTDATE
+        description: "Date item was received by customer."
+      - name: L_SHIPINSTRUCT
+        description: "Shipping instructions for this line item."
+      - name: L_SHIPMODE
+        description: "Mode of shipping: AIR, FOB, MAIL, RAIL, REG AIR, SHIP, TRUCK."
+      - name: L_COMMENT
+        description: "Free text comment from source."
+
+  - name: stg_part
+    description: >
+      Staged part master data prepared for Data Vault 2.1 loading. 
+      Source data read from REDHILL.PUBLIC.PART. 
+      Feeds HUB_PART and SAT_PART.
+    columns:
+      - name: PART_HK
+        description: "MD5 hash key derived from P_PARTKEY. Primary key for HUB_PART."
+      - name: PART_HASHDIFF
+        description: "MD5 hashdiff across all part descriptive attributes."
+      - name: LOAD_DATE
+        description: "Timestamp when the record was loaded into staging."
+      - name: RECORD_SOURCE
+        description: "Fixed value of REDHILL.PUBLIC.PART."
+      - name: P_PARTKEY
+        description: "Natural key for the part. Input to PART_HK."
+      - name: P_NAME
+        description: "Full name of the part. Included in PART_HASHDIFF."
+      - name: P_MFGR
+        description: "Manufacturer of the part. Included in PART_HASHDIFF."
+      - name: P_BRAND
+        description: "Brand of the part. Included in PART_HASHDIFF."
+      - name: P_TYPE
+        description: "Type classification of the part. Included in PART_HASHDIFF."
+      - name: P_SIZE
+        description: "Size of the part as integer. Included in PART_HASHDIFF."
+      - name: P_CONTAINER
+        description: "Container type for shipping. Included in PART_HASHDIFF."
+      - name: P_RETAILPRICE
+        description: "Retail price in USD. Included in PART_HASHDIFF."
+      - name: P_COMMENT
+        description: "Free text comment from source."
+
+  - name: stg_supplier
+    description: >
+      Staged supplier master data prepared for Data Vault 2.1 loading. 
+      Source data read from REDHILL.PUBLIC.SUPPLIER. 
+      Feeds HUB_SUPPLIER and SAT_SUPPLIER.
+    columns:
+      - name: SUPPLIER_HK
+        description: "MD5 hash key derived from S_SUPPKEY. Primary key for HUB_SUPPLIER."
+      - name: SUPPLIER_NATION_LHK
+        description: "MD5 link hash key from S_SUPPKEY and S_NATIONKEY. Primary key for LNK_SUPPLIER_NATION."
+      - name: SUPPLIER_HASHDIFF
+        description: "MD5 hashdiff across all supplier descriptive attributes."
+      - name: LOAD_DATE
+        description: "Timestamp when the record was loaded into staging."
+      - name: RECORD_SOURCE
+        description: "Fixed value of REDHILL.PUBLIC.SUPPLIER."
+      - name: S_SUPPKEY
+        description: "Natural key for the supplier. Input to SUPPLIER_HK."
+      - name: S_NAME
+        description: "Full name of the supplier. Included in SUPPLIER_HASHDIFF."
+      - name: S_ADDRESS
+        description: "Street address of the supplier. Included in SUPPLIER_HASHDIFF."
+      - name: S_NATIONKEY
+        description: "Foreign key to nation. Input to SUPPLIER_NATION_LHK."
+      - name: S_PHONE
+        description: "Supplier phone number. Included in SUPPLIER_HASHDIFF."
+      - name: S_ACCTBAL
+        description: "Supplier account balance in USD. Included in SUPPLIER_HASHDIFF."
+      - name: S_COMMENT
+        description: "Free text comment from source."
+
+  - name: stg_partsupp
+    description: >
+      Staged part-supplier relationship data prepared for Data Vault 2.1 
+      loading. Source data read from REDHILL.PUBLIC.PARTSUPP. 
+      Feeds LNK_PART_SUPPLIER and SAT_PARTSUPP.
+    columns:
+      - name: PART_HK
+        description: "MD5 hash key derived from PS_PARTKEY. Foreign hash key for LNK_PART_SUPPLIER."
+      - name: SUPPLIER_HK
+        description: "MD5 hash key derived from PS_SUPPKEY. Foreign hash key for LNK_PART_SUPPLIER."
+      - name: PARTSUPP_LHK
+        description: "MD5 link hash key from PS_PARTKEY and PS_SUPPKEY. Primary key for LNK_PART_SUPPLIER."
+      - name: PARTSUPP_HASHDIFF
+        description: "MD5 hashdiff across PS_AVAILQTY and PS_SUPPLYCOST."
+      - name: LOAD_DATE
+        description: "Timestamp when the record was loaded into staging."
+      - name: RECORD_SOURCE
+        description: "Fixed value of REDHILL.PUBLIC.PARTSUPP."
+      - name: PS_PARTKEY
+        description: "Foreign key to part. Part of composite natural key."
+      - name: PS_SUPPKEY
+        description: "Foreign key to supplier. Part of composite natural key."
+      - name: PS_AVAILQTY
+        description: "Available quantity from this supplier. Included in PARTSUPP_HASHDIFF."
+      - name: PS_SUPPLYCOST
+        description: "Cost to supply from this supplier in USD. Included in PARTSUPP_HASHDIFF."
+      - name: PS_COMMENT
+        description: "Free text comment from source."
+
+  - name: stg_region
+    description: >
+      Staged region reference data prepared for Data Vault 2.1 loading. 
+      Highly static table with only 5 records. Source data read from 
+      REDHILL.PUBLIC.REGION. Feeds HUB_REGION and SAT_REGION.
+    columns:
+      - name: REGION_HK
+        description: "MD5 hash key derived from R_REGIONKEY. Primary key for HUB_REGION."
+      - name: REGION_HASHDIFF
+        description: "MD5 hashdiff across R_NAME and R_COMMENT."
+      - name: LOAD_DATE
+        description: "Timestamp when the record was loaded into staging."
+      - name: RECORD_SOURCE
+        description: "Fixed value of REDHILL.PUBLIC.REGION."
+      - name: R_REGIONKEY
+        description: "Natural key for the region. Integer 0-4. Input to REGION_HK."
+      - name: R_NAME
+        description: "Region name in uppercase. Values: AFRICA, AMERICA, ASIA, EUROPE, MIDDLE EAST."
+      - name: R_COMMENT
+        description: "Free text comment describing the region from source."

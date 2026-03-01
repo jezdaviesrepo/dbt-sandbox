@@ -1,0 +1,318 @@
+version: 2
+
+sources:
+  - name: redhill
+    description: >
+      Source database containing raw operational data from the TPCH benchmark 
+      dataset. This is the primary source system for the REIGATE_MESH data vault. 
+      All tables are read-only from this database. No transformations are applied 
+      at source level.
+    database: REDHILL
+    schema: PUBLIC
+    tables:
+      - name: customer
+        description: >
+          Customer master data from the TPCH source system. Contains one record 
+          per customer with demographic and account information. 
+        columns:
+          - name: C_CUSTKEY
+            description: >
+              Primary key for the customer. Unique integer identifier assigned 
+              by the source system. 
+          - name: C_NAME
+            description: >
+              Full name of the customer. Format is Customer#XXXXXXXXX where 
+              X is a zero-padded integer. 
+          - name: C_ADDRESS
+            description: >
+              Street address of the customer. Free text, may contain special 
+              characters.
+          - name: C_NATIONKEY
+            description: >
+              Foreign key to the NATION table. Links the customer to their 
+              country of residence. 
+          - name: C_PHONE
+            description: >
+              Customer contact phone number in format XX-XXX-XXX-XXXX. 
+              First two digits correspond to the nation code. 
+          - name: C_ACCTBAL
+            description: >
+              Current account balance in USD. Can be negative indicating 
+              outstanding debt. Two decimal places. Tracked in SAT_CUSTOMER 
+              hashdiff.
+          - name: C_MKTSEGMENT
+            description: >
+              Market segment the customer belongs to. Possible values: 
+              AUTOMOBILE, BUILDING, FURNITURE, MACHINERY, HOUSEHOLD. 
+          - name: C_COMMENT
+            description: >
+              Free text comment field from the source system. Unstructured 
+              notes about the customer. 
+      - name: nation
+        description: >
+          Reference table containing 25 nations from the TPCH dataset. 
+        columns:
+          - name: N_NATIONKEY
+            description: >
+              Primary key for the nation. Integer between 0 and 24. Used 
+              as the natural key for HUB_NATION and referenced by 
+              C_NATIONKEY in the customer table.
+          - name: N_NAME
+            description: >
+              Full name of the nation in uppercase. Examples: ALGERIA, 
+              ARGENTINA, BRAZIL, CANADA, EGYPT. Tracked in SAT_NATION 
+              hashdiff.
+          - name: N_REGIONKEY
+            description: >
+              Foreign key to the REGION table. Links the nation to one 
+              of 5 geographic regions. Each region contains exactly 
+              5 nations.
+          - name: N_COMMENT
+            description: >
+              Free text comment describing the nation. Unstructured 
+              descriptive notes from the source system. Tracked in 
+              SAT_NATION hashdiff.
+
+      - name: orders
+        description: >
+          All customer orders from the TPCH source system. Each record 
+          represents one order placed by a customer. This table feeds 
+          HUB_ORDER, LNK_ORDER_CUSTOMER and SAT_ORDER in the raw vault.
+        columns:
+          - name: O_ORDERKEY
+            description: >
+              Primary key for the order. Unique integer identifier. Used 
+              as the natural key for HUB_ORDER.
+          - name: O_CUSTKEY
+            description: >
+              Foreign key to the CUSTOMER table. Links the order to the 
+              customer who placed it. Used in LNK_ORDER_CUSTOMER.
+          - name: O_ORDERSTATUS
+            description: >
+              Current status of the order. Single character value: 
+              O = Open, F = Fulfilled, P = In Progress. Tracked in 
+              SAT_ORDER hashdiff.
+          - name: O_TOTALPRICE
+            description: >
+              Total value of the order in USD including all line items. 
+              Does not include tax. Tracked in SAT_ORDER hashdiff.
+          - name: O_ORDERDATE
+            description: >
+              Date the order was placed. DATE type. Used for time-based 
+              analysis in the information mart.
+          - name: O_ORDERPRIORITY
+            description: >
+              Priority classification of the order. Values: 1-URGENT, 
+              2-HIGH, 3-MEDIUM, 4-NOT SPECIFIED, 5-LOW. Tracked in 
+              SAT_ORDER hashdiff.
+          - name: O_CLERK
+            description: >
+              Name of the clerk who processed the order. Format is 
+              Clerk#XXXXXXXXX. Tracked in SAT_ORDER hashdiff.
+          - name: O_SHIPPRIORITY
+            description: >
+              Shipping priority flag. Integer value, currently always 0 
+              in TPCH dataset. Tracked in SAT_ORDER hashdiff.
+          - name: O_COMMENT
+            description: >
+              Free text comment field for the order. Unstructured notes 
+              from the source system. Tracked in SAT_ORDER hashdiff.
+
+      - name: lineitem
+        description: >
+          Most granular table in the TPCH dataset. Each record represents 
+          one line item within an order. A single order can have between 
+          1 and 7 line items. Feeds HUB_LINEITEM, LNK_LINEITEM and 
+          SAT_LINEITEM in the raw vault.
+        columns:
+          - name: L_ORDERKEY
+            description: >
+              Foreign key to the ORDERS table. Links the line item to 
+              its parent order. Part of the composite natural key for 
+              HUB_LINEITEM.
+          - name: L_PARTKEY
+            description: >
+              Foreign key to the PART table. Identifies the part ordered 
+              on this line item. Used in LNK_LINEITEM.
+          - name: L_SUPPKEY
+            description: >
+              Foreign key to the SUPPLIER table. Identifies the supplier 
+              fulfilling this line item. Used in LNK_LINEITEM.
+          - name: L_LINENUMBER
+            description: >
+              Position of this line item within the order. Integer between 
+              1 and 7. Combined with L_ORDERKEY forms the composite 
+              natural key.
+          - name: L_QUANTITY
+            description: >
+              Number of units ordered for this line item. Numeric value. 
+              Tracked in SAT_LINEITEM hashdiff.
+          - name: L_EXTENDEDPRICE
+            description: >
+              Gross price before discounts and tax. Calculated as 
+              quantity multiplied by part retail price. Tracked in 
+              SAT_LINEITEM hashdiff.
+          - name: L_DISCOUNT
+            description: >
+              Discount applied to this line item. Decimal value between 
+              0.00 and 0.10 representing percentage. Tracked in 
+              SAT_LINEITEM hashdiff.
+          - name: L_TAX
+            description: >
+              Tax rate applied to this line item. Decimal value between 
+              0.00 and 0.08. Tracked in SAT_LINEITEM hashdiff.
+          - name: L_RETURNFLAG
+            description: >
+              Return status flag. Single character: R = Returned, 
+              A = Accepted, N = Not applicable. Tracked in SAT_LINEITEM 
+              hashdiff.
+          - name: L_LINESTATUS
+            description: >
+              Status of the line item. Single character: O = Open, 
+              F = Fulfilled. Tracked in SAT_LINEITEM hashdiff.
+          - name: L_SHIPDATE
+            description: >
+              Date the item was shipped to the customer. DATE type. 
+              Key date for delivery analysis.
+          - name: L_COMMITDATE
+            description: >
+              Committed delivery date agreed with the customer. DATE type. 
+              Used for SLA and on-time delivery analysis.
+          - name: L_RECEIPTDATE
+            description: >
+              Date the item was received by the customer. DATE type. 
+              Used to calculate actual delivery time.
+          - name: L_SHIPINSTRUCT
+            description: >
+              Shipping instructions for this line item. Values: 
+              DELIVER IN PERSON, COLLECT COD, NONE, TAKE BACK RETURN. 
+              Tracked in SAT_LINEITEM hashdiff.
+          - name: L_SHIPMODE
+            description: >
+              Mode of shipping used. Values: AIR, FOB, MAIL, RAIL, 
+              REG AIR, SHIP, TRUCK. Tracked in SAT_LINEITEM hashdiff.
+          - name: L_COMMENT
+            description: >
+              Free text comment for the line item. Unstructured notes 
+              from the source system.
+
+      - name: part
+        description: >
+          Part master data containing all available parts in the TPCH 
+          dataset. Feeds HUB_PART and SAT_PART in the raw vault.
+        columns:
+          - name: P_PARTKEY
+            description: >
+              Primary key for the part. Unique integer identifier. Used 
+              as the natural key for HUB_PART.
+          - name: P_NAME
+            description: >
+              Full name of the part. Multi-word descriptive name generated 
+              from a set of colour and material combinations. Tracked in 
+              SAT_PART hashdiff.
+          - name: P_MFGR
+            description: >
+              Manufacturer of the part. Format is Manufacturer#X where 
+              X is 1-5. Tracked in SAT_PART hashdiff.
+          - name: P_BRAND
+            description: >
+              Brand of the part. Format is Brand#XY where X is 1-5 and 
+              Y is 1-5. Tracked in SAT_PART hashdiff.
+          - name: P_TYPE
+            description: >
+              Type classification of the part. Combination of material 
+              and finish descriptor. Tracked in SAT_PART hashdiff.
+          - name: P_SIZE
+            description: >
+              Size of the part. Integer between 1 and 50. Tracked in 
+              SAT_PART hashdiff.
+          - name: P_CONTAINER
+            description: >
+              Container type used to ship the part. Values include SM BOX, 
+              MED BAG, LG PKG etc. Tracked in SAT_PART hashdiff.
+          - name: P_RETAILPRICE
+            description: >
+              Retail price of the part in USD. Used to calculate 
+              L_EXTENDEDPRICE in the LINEITEM table.
+          - name: P_COMMENT
+            description: >
+              Free text comment for the part from the source system.
+
+      - name: partsupp
+        description: >
+          Supplier and pricing information per part. Junction table between 
+          PART and SUPPLIER. Each part can have up to 4 suppliers. Feeds 
+          LNK_PART_SUPPLIER and SAT_PARTSUPP in the raw vault.
+        columns:
+          - name: PS_PARTKEY
+            description: >
+              Foreign key to the PART table. Combined with PS_SUPPKEY 
+              forms the composite natural key.
+          - name: PS_SUPPKEY
+            description: >
+              Foreign key to the SUPPLIER table. Combined with PS_PARTKEY 
+              forms the composite natural key.
+          - name: PS_AVAILQTY
+            description: >
+              Available quantity of the part from this supplier. Integer 
+              value. Tracked in SAT_PARTSUPP hashdiff.
+          - name: PS_SUPPLYCOST
+            description: >
+              Cost to supply this part from this supplier in USD. Used 
+              in profitability calculations. Tracked in SAT_PARTSUPP 
+              hashdiff.
+          - name: PS_COMMENT
+            description: >
+              Free text comment for the part-supplier relationship.
+
+      - name: supplier
+        description: >
+          Supplier master data containing all suppliers in the TPCH dataset. 
+          Feeds HUB_SUPPLIER and SAT_SUPPLIER in the raw vault.
+        columns:
+          - name: S_SUPPKEY
+            description: >
+              Primary key for the supplier. Unique integer identifier. 
+              Used as the natural key for HUB_SUPPLIER.
+          - name: S_NAME
+            description: >
+              Full name of the supplier. Format is Supplier#XXXXXXXXX. 
+              Tracked in SAT_SUPPLIER hashdiff.
+          - name: S_ADDRESS
+            description: >
+              Street address of the supplier. Free text field. Tracked 
+              in SAT_SUPPLIER hashdiff.
+          - name: S_NATIONKEY
+            description: >
+              Foreign key to the NATION table. Links the supplier to 
+              their country. Used in LNK_SUPPLIER_NATION.
+          - name: S_PHONE
+            description: >
+              Supplier contact phone number in format XX-XXX-XXX-XXXX. 
+              Tracked in SAT_SUPPLIER hashdiff.
+          - name: S_ACCTBAL
+            description: >
+              Supplier account balance in USD. Can be negative. Tracked 
+              in SAT_SUPPLIER hashdiff.
+          - name: S_COMMENT
+            description: >
+              Free text comment for the supplier from the source system.
+
+      - name: region
+        description: >
+          Reference table containing 5 geographic regions from the TPCH 
+          dataset. Highly static — rarely if ever changes. Feeds HUB_REGION 
+          and SAT_REGION in the raw vault.
+        columns:
+          - name: R_REGIONKEY
+            description: >
+              Primary key for the region. Integer between 0 and 4. Used 
+              as the natural key for HUB_REGION.
+          - name: R_NAME
+            description: >
+              Full name of the region in uppercase. Values: AFRICA, 
+              AMERICA, ASIA, EUROPE, MIDDLE EAST. Tracked in SAT_REGION 
+              hashdiff.
+          - name: R_COMMENT
+            description: >
+              Free text comment describing the region from the source system.

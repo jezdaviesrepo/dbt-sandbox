@@ -1,0 +1,22 @@
+What goes in each:
+STAGING
+
+STG_CUSTOMER
+STG_NATION
+Hash keys and hashdiffs computed here
+Views only, never stored permanently
+
+RAW_VAULT
+
+HUB_CUSTOMER, HUB_NATION
+LNK_CUSTOMER_NATION
+SAT_CUSTOMER, SAT_NATION
+Insert-only incrementals, full auditability
+
+BUSINESS_VAULT
+
+PIT_CUSTOMER — point in time table for customer
+BRIDGE_CUSTOMER_NATION — bridge table joining hubs via links
+Computed/derived satellites
+Business rules applied here, not in raw vault
+
