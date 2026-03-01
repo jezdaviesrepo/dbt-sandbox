@@ -5,9 +5,9 @@
 
 {%- set source_model = "stg_part"      -%}
 {%- set src_pk = "PART_HK"             -%}
-{%- set src_nk = "P_PARTKEY"           -%}
-{%- set src_ldts = "LOAD_DATE"          -%}
-{%- set src_source = "RECORD_SOURCE"    -%}
+{%- set src_nk = "PART_KEY"            -%}
+{%- set src_ldts = "LOAD_DATE"         -%}
+{%- set src_source = "RECORD_SOURCE"   -%}
 
 {{ automate_dv.hub(
     src_pk=src_pk, 

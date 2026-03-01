@@ -5,7 +5,7 @@
 
 {%- set source_model = "stg_nation"     -%}
 {%- set src_pk = "NATION_HK"            -%}
-{%- set src_nk = "N_NATIONKEY"          -%}
+{%- set src_nk = "NATION_KEY"           -%}
 {%- set src_ldts = "LOAD_DATE"          -%}
 {%- set src_source = "RECORD_SOURCE"    -%}
 

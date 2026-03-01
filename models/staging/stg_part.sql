@@ -2,11 +2,20 @@
 
 {{
     automate_dv.stage(
-        include_source_columns=true,
+        include_source_columns=false,
         source_model="src_part",
         derived_columns={
-            "LOAD_DATE": "CURRENT_TIMESTAMP()",
+            "LOAD_DATE":     "CURRENT_TIMESTAMP()",
             "RECORD_SOURCE": "!REDHILL.PUBLIC.PART",
+            "PART_KEY":      "P_PARTKEY",
+            "NAME":          "P_NAME",
+            "MANUFACTURER":  "P_MFGR",
+            "BRAND":         "P_BRAND",
+            "TYPE":          "P_TYPE",
+            "SIZE":          "P_SIZE",
+            "CONTAINER":     "P_CONTAINER",
+            "RETAIL_PRICE":  "P_RETAILPRICE",
+            "COMMENT":       "P_COMMENT",
         },
         hashed_columns={
             "PART_HK": ["P_PARTKEY"],

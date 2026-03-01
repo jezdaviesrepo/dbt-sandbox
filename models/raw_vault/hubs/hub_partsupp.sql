@@ -1,11 +1,11 @@
 {{ config(
     materialized='incremental',
-    post_hook="{% if not is_incremental() %}ALTER TABLE {{ this }} ADD CONSTRAINT pk_{{ this.name }} PRIMARY KEY (PARTSUPP_HK){% endif %}"
+    post_hook="{% if not is_incremental() %}ALTER TABLE {{ this }} ADD CONSTRAINT pk_{{ this.name }} PRIMARY KEY (PART_SUPPLIER_HK){% endif %}"
 ) }}
 
 {%- set source_model = "stg_partsupp"   -%}
-{%- set src_pk = "PARTSUPP_HK"          -%}
-{%- set src_nk = "PS_PARTKEY"           -%}
+{%- set src_pk = "PART_SUPPLIER_HK"     -%}
+{%- set src_nk = "PART_KEY"             -%}
 {%- set src_ldts = "LOAD_DATE"          -%}
 {%- set src_source = "RECORD_SOURCE"    -%}
 

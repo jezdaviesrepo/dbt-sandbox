@@ -5,7 +5,7 @@
 
 {%- set source_model = "stg_supplier"   -%}
 {%- set src_pk = "SUPPLIER_HK"          -%}
-{%- set src_nk = "S_SUPPKEY"            -%}
+{%- set src_nk = "SUPPLIER_KEY"         -%}
 {%- set src_ldts = "LOAD_DATE"          -%}
 {%- set src_source = "RECORD_SOURCE"    -%}
 

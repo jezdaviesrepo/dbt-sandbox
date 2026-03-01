@@ -2,11 +2,18 @@
 
 {{
     automate_dv.stage(
-        include_source_columns=true,
+        include_source_columns=false,
         source_model="src_supplier",
         derived_columns={
-            "LOAD_DATE": "CURRENT_TIMESTAMP()",
-            "RECORD_SOURCE": "!REDHILL.PUBLIC.SUPPLIER",
+            "LOAD_DATE":      "CURRENT_TIMESTAMP()",
+            "RECORD_SOURCE":  "!REDHILL.PUBLIC.SUPPLIER",
+            "SUPPLIER_KEY":   "S_SUPPKEY",
+            "NAME":           "S_NAME",
+            "ADDRESS":        "S_ADDRESS",
+            "NATION_KEY":     "S_NATIONKEY",
+            "PHONE":          "S_PHONE",
+            "ACCOUNT_BALANCE":"S_ACCTBAL",
+            "COMMENT":        "S_COMMENT",
         },
         hashed_columns={
             "SUPPLIER_HK": ["S_SUPPKEY"],

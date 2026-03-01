@@ -5,7 +5,7 @@
 
 {%- set source_model = "stg_region"   -%}
 {%- set src_pk = "REGION_HK"          -%}
-{%- set src_nk = "R_REGIONKEY"        -%}
+{%- set src_nk = "REGION_KEY"         -%}
 {%- set src_ldts = "LOAD_DATE"        -%}
 {%- set src_source = "RECORD_SOURCE"  -%}
 

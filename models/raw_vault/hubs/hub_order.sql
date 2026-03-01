@@ -5,7 +5,7 @@
 
 {%- set source_model = "stg_order"      -%}
 {%- set src_pk = "ORDER_HK"             -%}
-{%- set src_nk = "O_ORDERKEY"           -%}
+{%- set src_nk = "ORDER_KEY"            -%}
 {%- set src_ldts = "LOAD_DATE"          -%}
 {%- set src_source = "RECORD_SOURCE"    -%}
 
