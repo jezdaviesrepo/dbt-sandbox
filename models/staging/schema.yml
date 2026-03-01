@@ -129,7 +129,7 @@ models:
           Payload column carried into SAT_NATION. Included in 
           NATION_HASHDIFF.
 
-  - name: stg_orders
+  - name: stg_order
     description: >
       Staged orders data prepared for Data Vault 2.1 loading into 
       REIGATE_MESH. Computes hash keys, link hash keys and hashdiffs 
