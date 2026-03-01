@@ -16,7 +16,9 @@
             "COMMENT":        "S_COMMENT",
         },
         hashed_columns={
-            "SUPPLIER_HK": ["S_SUPPKEY"],
+            "SUPPLIER_HK":          "S_SUPPKEY",
+            "NATION_HK":            "S_NATIONKEY",
+            "SUPPLIER_NATION_LHK":  ["S_SUPPKEY", "S_NATIONKEY"],
             "SUPPLIER_HASHDIFF": {
                 "is_hashdiff": true,
                 "exclude_columns": ["S_SUPPKEY"],

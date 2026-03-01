@@ -1,6 +1,9 @@
 {{ config(
     materialized='incremental',
-    post_hook="{% if not is_incremental() %}ALTER TABLE {{ this }} ADD CONSTRAINT pk_{{ this.name }} PRIMARY KEY (CUSTOMER_HK, LOAD_DATE){% endif %}"
+    post_hook=[
+        "{% if not is_incremental() %}ALTER TABLE {{ this }} ADD CONSTRAINT pk_{{ this.name }} PRIMARY KEY (CUSTOMER_HK, LOAD_DATE){% endif %}",
+        "{% if not is_incremental() %}ALTER TABLE {{ this }} ADD CONSTRAINT fk_{{ this.name }}_hub FOREIGN KEY (CUSTOMER_HK) REFERENCES REIGATE_MESH.RAW_VAULT.hub_customer (CUSTOMER_HK){% endif %}"
+    ]
 ) }}
 
 {%- set source_model = "stg_customer"       -%}

@@ -2,12 +2,12 @@
     materialized='incremental',
     database='REIGATE_MESH',
     schema='RAW_VAULT',
-    post_hook="{% if not is_incremental() %}ALTER TABLE {{ this }} ADD CONSTRAINT pk_{{ this.name }} PRIMARY KEY (CUSTOMER_NATION_LHK){% endif %}"
+    post_hook="{% if not is_incremental() %}ALTER TABLE {{ this }} ADD CONSTRAINT pk_{{ this.name }} PRIMARY KEY (ORDER_CUSTOMER_LHK){% endif %}"
 ) }}
 
-{%- set source_model = "stg_customer"               -%}
-{%- set src_pk       = "CUSTOMER_NATION_LHK"        -%}
-{%- set src_fk       = ["CUSTOMER_HK", "NATION_HK"] -%}
+{%- set source_model = "stg_order"                  -%}
+{%- set src_pk       = "ORDER_CUSTOMER_LHK"         -%}
+{%- set src_fk       = ["ORDER_HK", "CUSTOMER_HK"]  -%}
 {%- set src_ldts     = "LOAD_DATE"                  -%}
 {%- set src_source   = "RECORD_SOURCE"              -%}
 

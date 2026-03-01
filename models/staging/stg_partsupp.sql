@@ -14,7 +14,10 @@
             "COMMENT":                 "PS_COMMENT",
         },
         hashed_columns={
-            "PART_SUPPLIER_HK": ["PS_PARTKEY", "PS_SUPPKEY"],
+            "PART_HK":             "PS_PARTKEY",
+            "SUPPLIER_HK":         "PS_SUPPKEY",
+            "PART_SUPPLIER_LHK":   ["PS_PARTKEY", "PS_SUPPKEY"],
+            "PART_SUPPLIER_HK":    ["PS_PARTKEY", "PS_SUPPKEY"],
             "PART_SUPPLIER_HASHDIFF": {
                 "is_hashdiff": true,
                 "exclude_columns": ["PS_PARTKEY", "PS_SUPPKEY"],

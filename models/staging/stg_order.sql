@@ -18,7 +18,9 @@
             "COMMENT":        "O_COMMENT",
         },
         hashed_columns={
-            "ORDER_HK": ["O_ORDERKEY"],
+            "ORDER_HK":            "O_ORDERKEY",
+            "CUSTOMER_HK":         "O_CUSTKEY",
+            "ORDER_CUSTOMER_LHK":  ["O_ORDERKEY", "O_CUSTKEY"],
             "ORDER_HASHDIFF": {
                 "is_hashdiff": true,
                 "exclude_columns": ["O_ORDERKEY"],

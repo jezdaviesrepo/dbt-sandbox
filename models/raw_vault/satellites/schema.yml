@@ -3,6 +3,12 @@ version: 2
 models:
   - name: sat_customer
     description: Satellite table for Customer details, containing descriptive attributes and tracking changes over time in the Data Vault model
+    constraints:
+      - type: foreign_key
+        columns:
+          - customer_hk
+        expression: REIGATE_MESH.RAW_VAULT.hub_customer (customer_hk)
+        name: fk_sat_customer_hub_customer
     columns:
       - name: customer_hk
         data_type: binary(16)

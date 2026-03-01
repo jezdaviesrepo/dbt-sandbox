@@ -25,7 +25,11 @@
             "COMMENT":       "L_COMMENT",
         },
         hashed_columns={
-            "LINE_ITEM_HK": ["L_ORDERKEY", "L_PARTKEY", "L_SUPPKEY"],
+            "ORDER_HK":        "L_ORDERKEY",
+            "PART_HK":         "L_PARTKEY",
+            "SUPPLIER_HK":     "L_SUPPKEY",
+            "LINE_ITEM_LHK":   ["L_ORDERKEY", "L_PARTKEY", "L_SUPPKEY"],
+            "LINE_ITEM_HK":    ["L_ORDERKEY", "L_PARTKEY", "L_SUPPKEY"],
             "LINE_ITEM_HASHDIFF": {
                 "is_hashdiff": true,
                 "exclude_columns": ["L_ORDERKEY", "L_PARTKEY", "L_SUPPKEY"],
