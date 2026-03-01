@@ -1,9 +1,10 @@
-
 name: "redhill"
 version: "1.0.0"
+dbt-cloud:
+    project-id: 70471823558957
 config-version: 2
 
-profile: "default"
+profile: "semantic"
 
 model-paths: ["models"]
 analysis-paths: ["analyses"]
@@ -30,9 +31,14 @@ models:
       +database: REIGATE_MESH
       +schema: RAW_VAULT
       +materialized: incremental
+      +on_schema_change: 'append_new_columns'
       hubs:
         +tags: ['hub']
       links:
+        +database: REIGATE_MESH
+        +schema: RAW_VAULT
         +tags: ['link']
       satellites:
+        +database: REIGATE_MESH
+        +schema: RAW_VAULT
         +tags: ['satellite']
