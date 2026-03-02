@@ -46,7 +46,7 @@ models:
           - line_item_hk
           - load_date
         expression: raw_vault.sat_lineitem (line_item_hk, load_date)
-        name: fk_1
+        name: fk_hub_lineitem_sat_lineitem
     columns:
       - name: line_item_hk
         data_type: binary(16)
@@ -104,7 +104,7 @@ models:
           - order_hk
           - load_date
         expression: raw_vault.sat_order (order_hk, load_date)
-        name: fk_1
+        name: fk_hub_order_sat_order
     columns:
       - name: order_hk
         data_type: binary(16)
@@ -136,7 +136,7 @@ models:
           - part_hk
           - load_date
         expression: raw_vault.sat_part (part_hk, load_date)
-        name: fk_1
+        name: fk_hub_part_sat_part
     columns:
       - name: part_hk
         data_type: binary(16)
@@ -245,12 +245,12 @@ models:
         columns:
           - nation_hk
         expression: raw_vault.hub_nation (nation_hk)
-        name: fk_1
+        name: fk_link_customer_nation_hub_nation
       - type: foreign_key
         columns:
           - customer_hk
         expression: raw_vault.hub_customer (customer_hk)
-        name: fk_2
+        name: fk_link_customer_nation_hub_customer
     columns:
       - name: customer_nation_lhk
         data_type: binary(16)
@@ -280,11 +280,6 @@ models:
         columns:
           - line_item_lhk
         name: pk_link_lineitem
-      - type: foreign_key
-        columns:
-          - line_item_hk
-        expression: raw_vault.hub_lineitem (line_item_hk)
-        name: fk_1
     columns:
       - name: line_item_lhk
         data_type: binary(16)
@@ -306,11 +301,6 @@ models:
       - name: record_source
         data_type: varchar(23)
         description: ''
-      - name: line_item_hk
-        data_type: binary(16)
-        description: ''
-        constraints:
-          - type: not_null
 
   - name: link_order_customer
     description: ''
@@ -326,12 +316,12 @@ models:
         columns:
           - order_hk
         expression: raw_vault.hub_order (order_hk)
-        name: fk_1
+        name: fk_link_order_customer_hub_order
       - type: foreign_key
         columns:
           - customer_hk
         expression: raw_vault.hub_customer (customer_hk)
-        name: fk_2
+        name: fk_link_order_customer_hub_customer
     columns:
       - name: order_customer_lhk
         data_type: binary(16)
@@ -365,17 +355,17 @@ models:
         columns:
           - part_hk
         expression: raw_vault.hub_part (part_hk)
-        name: fk_1
+        name: fk_link_part_supplier_hub_part
       - type: foreign_key
         columns:
           - supplier_hk
         expression: raw_vault.hub_supplier (supplier_hk)
-        name: fk_2
+        name: fk_link_part_supplier_hub_supplier
       - type: foreign_key
         columns:
           - part_supplier_hk
         expression: raw_vault.hub_partsupp (part_supplier_hk)
-        name: fk_3
+        name: fk_link_part_supplier_hub_partsupp
     columns:
       - name: part_supplier_lhk
         data_type: binary(16)
@@ -414,12 +404,12 @@ models:
         columns:
           - supplier_hk
         expression: raw_vault.hub_supplier (supplier_hk)
-        name: fk_1
+        name: fk_link_supplier_nation_hub_supplier
       - type: foreign_key
         columns:
           - nation_hk
         expression: raw_vault.hub_nation (nation_hk)
-        name: fk_2
+        name: fk_link_supplier_nation_hub_nation
     columns:
       - name: supplier_nation_lhk
         data_type: binary(16)
@@ -454,7 +444,7 @@ models:
         columns:
           - customer_hk
         expression: raw_vault.hub_customer (customer_hk)
-        name: fk_sat_customer_hub
+        name: fk_sat_customer_hub_customer
     columns:
       - name: customer_hk
         data_type: binary(16)
