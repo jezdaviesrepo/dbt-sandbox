@@ -7,97 +7,816 @@ version: 2
 models:
   - name: hub_customer
     description: Hub table for Customer entities, containing unique business keys and metadata for tracking data lineage and loading history
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - customer_hk
+        name: pk_hub_customer
     columns:
       - name: customer_hk
+        data_type: binary(16)
         description: Surrogate hash key for the Customer, serving as the primary key of the hub table
+        constraints:
+          - type: not_null
       - name: customer_key
+        data_type: number(38,0)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: Timestamp indicating when this customer record was loaded into the data vault
       - name: record_source
+        data_type: varchar(23)
         description: Source system or process that supplied this customer record
 
   - name: hub_lineitem
     description: Hub table for Line Item entities, containing unique business keys and metadata for tracking data lineage and loading history
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - line_item_hk
+        name: pk_hub_lineitem
     columns:
       - name: line_item_hk
+        data_type: binary(16)
         description: ''
+        constraints:
+          - type: not_null
       - name: linenumber
+        data_type: number(38,0)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: Timestamp indicating when this line item record was loaded into the data vault
       - name: record_source
+        data_type: varchar(23)
         description: Source system or process that supplied this line item record
 
   - name: hub_nation
     description: Hub table for Nation entities, containing unique business keys and metadata for tracking data lineage and loading history
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - nation_hk
+        name: pk_hub_nation
     columns:
       - name: nation_hk
+        data_type: binary(16)
         description: Surrogate hash key for the Nation, serving as the primary key of the hub table
+        constraints:
+          - type: not_null
       - name: nation_key
+        data_type: number(38,0)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: Timestamp indicating when this nation record was loaded into the data vault
       - name: record_source
+        data_type: varchar(21)
         description: Source system or process that supplied this nation record
 
   - name: hub_order
     description: Hub table for Order entities, containing unique business keys and metadata for tracking data lineage and loading history
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - order_hk
+        name: pk_hub_order
     columns:
       - name: order_hk
+        data_type: binary(16)
         description: Surrogate hash key for the Order, serving as the primary key of the hub table
+        constraints:
+          - type: not_null
       - name: order_key
+        data_type: number(38,0)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: Timestamp indicating when this order record was loaded into the data vault
       - name: record_source
+        data_type: varchar(20)
         description: Source system or process that supplied this order record
 
   - name: hub_part
     description: Hub table for Part entities, containing unique business keys and metadata for tracking data lineage and loading history
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - part_hk
+        name: pk_hub_part
     columns:
       - name: part_hk
+        data_type: binary(16)
         description: Surrogate hash key for the Part, serving as the primary key of the hub table
+        constraints:
+          - type: not_null
       - name: part_key
+        data_type: number(38,0)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: Timestamp indicating when this part record was loaded into the data vault
       - name: record_source
+        data_type: varchar(19)
         description: Source system or process that supplied this part record
 
   - name: hub_partsupp
     description: Hub table for Part Supplier entities, containing unique business keys and metadata for tracking data lineage and loading history
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - part_supplier_hk
+        name: pk_hub_partsupp
     columns:
       - name: part_supplier_hk
+        data_type: binary(16)
         description: ''
+        constraints:
+          - type: not_null
       - name: part_key
+        data_type: number(38,0)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: Timestamp indicating when this part supplier record was loaded into the data vault
       - name: record_source
+        data_type: varchar(23)
         description: Source system or process that supplied this part supplier record
 
   - name: hub_region
     description: Hub table for Region entities, containing unique business keys and metadata for tracking data lineage and loading history
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - region_hk
+        name: pk_hub_region
     columns:
       - name: region_hk
+        data_type: binary(16)
         description: Surrogate hash key for the Region, serving as the primary key of the hub table
+        constraints:
+          - type: not_null
       - name: region_key
+        data_type: number(38,0)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: Timestamp indicating when this region record was loaded into the data vault
       - name: record_source
+        data_type: varchar(21)
         description: Source system or process that supplied this region record
 
   - name: hub_supplier
     description: Hub table for Supplier entities, containing unique business keys and metadata for tracking data lineage
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - supplier_hk
+        name: pk_hub_supplier
     columns:
       - name: supplier_hk
+        data_type: binary(16)
         description: Surrogate hash key for the Supplier, serving as the primary key of the hub table
+        constraints:
+          - type: not_null
       - name: supplier_key
+        data_type: number(38,0)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: Timestamp indicating when this supplier record was loaded into the data vault
       - name: record_source
+        data_type: varchar(23)
         description: Source system or process that supplied this supplier record
+
+  - name: link_customer_nation
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - customer_nation_lhk
+        name: pk_link_customer_nation
+    columns:
+      - name: customer_nation_lhk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: customer_hk
+        data_type: binary(16)
+        description: ''
+      - name: nation_hk
+        data_type: binary(16)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+      - name: record_source
+        data_type: varchar(23)
+        description: ''
+
+  - name: link_lineitem
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - line_item_lhk
+        name: pk_link_lineitem
+    columns:
+      - name: line_item_lhk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: order_hk
+        data_type: binary(16)
+        description: ''
+      - name: part_hk
+        data_type: binary(16)
+        description: ''
+      - name: supplier_hk
+        data_type: binary(16)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+      - name: record_source
+        data_type: varchar(23)
+        description: ''
+
+  - name: link_order_customer
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - order_customer_lhk
+        name: pk_link_order_customer
+    columns:
+      - name: order_customer_lhk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: order_hk
+        data_type: binary(16)
+        description: ''
+      - name: customer_hk
+        data_type: binary(16)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+      - name: record_source
+        data_type: varchar(20)
+        description: ''
+
+  - name: link_part_supplier
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - part_supplier_lhk
+        name: pk_link_part_supplier
+    columns:
+      - name: part_supplier_lhk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: part_hk
+        data_type: binary(16)
+        description: ''
+      - name: supplier_hk
+        data_type: binary(16)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+      - name: record_source
+        data_type: varchar(23)
+        description: ''
+
+  - name: link_supplier_nation
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - supplier_nation_lhk
+        name: pk_link_supplier_nation
+    columns:
+      - name: supplier_nation_lhk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: supplier_hk
+        data_type: binary(16)
+        description: ''
+      - name: nation_hk
+        data_type: binary(16)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+      - name: record_source
+        data_type: varchar(23)
+        description: ''
+
+  - name: sat_customer
+    description: Satellite table for Customer details, containing descriptive attributes and tracking changes over time in the Data Vault model
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - customer_hk
+          - load_date
+        name: pk_sat_customer
+      - type: foreign_key
+        columns:
+          - customer_hk
+        expression: raw_vault.hub_customer (customer_hk)
+        name: fk_sat_customer_hub
+    columns:
+      - name: customer_hk
+        data_type: binary(16)
+        description: Hash key linking to the Customer Hub table, representing the unique business entity
+        constraints:
+          - type: not_null
+      - name: customer_hashdiff
+        data_type: binary(16)
+        description: Hash difference used to track and identify changes in customer attributes
+      - name: customer_key
+        data_type: number(38,0)
+        description: ''
+      - name: name
+        data_type: varchar(25)
+        description: ''
+      - name: address
+        data_type: varchar(40)
+        description: ''
+      - name: nation_key
+        data_type: number(38,0)
+        description: ''
+      - name: phone
+        data_type: varchar(15)
+        description: ''
+      - name: account_balance
+        data_type: number(12,2)
+        description: ''
+      - name: market_segment
+        data_type: varchar(10)
+        description: ''
+      - name: comment
+        data_type: varchar(117)
+        description: ''
+      - name: nation_hk
+        data_type: binary(16)
+        description: ''
+      - name: customer_nation_lhk
+        data_type: binary(16)
+        description: Link hash key connecting the customer to their associated nation
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: Timestamp indicating when this specific customer record version was loaded into the data vault
+        constraints:
+          - type: not_null
+      - name: record_source
+        data_type: varchar(23)
+        description: Source system or process that supplied this customer record version
+
+  - name: sat_lineitem
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - line_item_hk
+          - load_date
+        name: pk_sat_lineitem
+    columns:
+      - name: line_item_hk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: line_item_hashdiff
+        data_type: binary(16)
+        description: ''
+      - name: orderkey
+        data_type: number(38,0)
+        description: ''
+      - name: partkey
+        data_type: number(38,0)
+        description: ''
+      - name: suppkey
+        data_type: number(38,0)
+        description: ''
+      - name: linenumber
+        data_type: number(38,0)
+        description: ''
+      - name: quantity
+        data_type: number(12,2)
+        description: ''
+      - name: extendedprice
+        data_type: number(12,2)
+        description: ''
+      - name: discount
+        data_type: number(12,2)
+        description: ''
+      - name: tax
+        data_type: number(12,2)
+        description: ''
+      - name: returnflag
+        data_type: varchar(1)
+        description: ''
+      - name: linestatus
+        data_type: varchar(1)
+        description: ''
+      - name: shipdate
+        data_type: date
+        description: ''
+      - name: commitdate
+        data_type: date
+        description: ''
+      - name: receiptdate
+        data_type: date
+        description: ''
+      - name: shipinstruct
+        data_type: varchar(25)
+        description: ''
+      - name: shipmode
+        data_type: varchar(10)
+        description: ''
+      - name: comment
+        data_type: varchar(44)
+        description: ''
+      - name: order_hk
+        data_type: binary(16)
+        description: ''
+      - name: part_hk
+        data_type: binary(16)
+        description: ''
+      - name: supplier_hk
+        data_type: binary(16)
+        description: ''
+      - name: line_item_lhk
+        data_type: binary(16)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: record_source
+        data_type: varchar(23)
+        description: ''
+
+  - name: sat_nation
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - nation_hk
+          - load_date
+        name: pk_sat_nation
+    columns:
+      - name: nation_hk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: nation_hashdiff
+        data_type: binary(16)
+        description: ''
+      - name: nation_key
+        data_type: number(38,0)
+        description: ''
+      - name: name
+        data_type: varchar(25)
+        description: ''
+      - name: region_key
+        data_type: number(38,0)
+        description: ''
+      - name: comment
+        data_type: varchar(152)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: record_source
+        data_type: varchar(21)
+        description: ''
+
+  - name: sat_order
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - order_hk
+          - load_date
+        name: pk_sat_order
+    columns:
+      - name: order_hk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: order_hashdiff
+        data_type: binary(16)
+        description: ''
+      - name: order_key
+        data_type: number(38,0)
+        description: ''
+      - name: customer_key
+        data_type: number(38,0)
+        description: ''
+      - name: order_status
+        data_type: varchar(1)
+        description: ''
+      - name: total_price
+        data_type: number(12,2)
+        description: ''
+      - name: order_date
+        data_type: date
+        description: ''
+      - name: order_priority
+        data_type: varchar(15)
+        description: ''
+      - name: clerk
+        data_type: varchar(15)
+        description: ''
+      - name: shippriority
+        data_type: number(38,0)
+        description: ''
+      - name: comment
+        data_type: varchar(79)
+        description: ''
+      - name: customer_hk
+        data_type: binary(16)
+        description: ''
+      - name: order_customer_lhk
+        data_type: binary(16)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: record_source
+        data_type: varchar(20)
+        description: ''
+
+  - name: sat_part
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - part_hk
+          - load_date
+        name: pk_sat_part
+    columns:
+      - name: part_hk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: part_hashdiff
+        data_type: binary(16)
+        description: ''
+      - name: part_key
+        data_type: number(38,0)
+        description: ''
+      - name: name
+        data_type: varchar(55)
+        description: ''
+      - name: manufacturer
+        data_type: varchar(25)
+        description: ''
+      - name: brand
+        data_type: varchar(10)
+        description: ''
+      - name: type
+        data_type: varchar(25)
+        description: ''
+      - name: size
+        data_type: number(38,0)
+        description: ''
+      - name: container
+        data_type: varchar(10)
+        description: ''
+      - name: retail_price
+        data_type: number(12,2)
+        description: ''
+      - name: comment
+        data_type: varchar(23)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: record_source
+        data_type: varchar(19)
+        description: ''
+
+  - name: sat_partsupp
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - part_supplier_hk
+          - load_date
+        name: pk_sat_partsupp
+    columns:
+      - name: part_supplier_hk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: part_supplier_hashdiff
+        data_type: binary(16)
+        description: ''
+      - name: part_key
+        data_type: number(38,0)
+        description: ''
+      - name: supplier_key
+        data_type: number(38,0)
+        description: ''
+      - name: available_quantity
+        data_type: number(38,0)
+        description: ''
+      - name: supply_cost
+        data_type: number(12,2)
+        description: ''
+      - name: comment
+        data_type: varchar(199)
+        description: ''
+      - name: part_hk
+        data_type: binary(16)
+        description: ''
+      - name: supplier_hk
+        data_type: binary(16)
+        description: ''
+      - name: part_supplier_lhk
+        data_type: binary(16)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: record_source
+        data_type: varchar(23)
+        description: ''
+
+  - name: sat_region
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - region_hk
+          - load_date
+        name: pk_sat_region
+    columns:
+      - name: region_hk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: region_hashdiff
+        data_type: binary(16)
+        description: ''
+      - name: region_key
+        data_type: number(38,0)
+        description: ''
+      - name: name
+        data_type: varchar(25)
+        description: ''
+      - name: comment
+        data_type: varchar(152)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: record_source
+        data_type: varchar(21)
+        description: ''
+
+  - name: sat_supplier
+    description: ''
+    config:
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns:
+          - supplier_hk
+          - load_date
+        name: pk_sat_supplier
+    columns:
+      - name: supplier_hk
+        data_type: binary(16)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: supplier_hashdiff
+        data_type: binary(16)
+        description: ''
+      - name: supplier_key
+        data_type: number(38,0)
+        description: ''
+      - name: name
+        data_type: varchar(25)
+        description: ''
+      - name: address
+        data_type: varchar(40)
+        description: ''
+      - name: nation_key
+        data_type: number(38,0)
+        description: ''
+      - name: phone
+        data_type: varchar(15)
+        description: ''
+      - name: account_balance
+        data_type: number(12,2)
+        description: ''
+      - name: comment
+        data_type: varchar(101)
+        description: ''
+      - name: nation_hk
+        data_type: binary(16)
+        description: ''
+      - name: supplier_nation_lhk
+        data_type: binary(16)
+        description: ''
+      - name: load_date
+        data_type: timestamp_ltz(9)
+        description: ''
+        constraints:
+          - type: not_null
+      - name: record_source
+        data_type: varchar(23)
+        description: ''
 
