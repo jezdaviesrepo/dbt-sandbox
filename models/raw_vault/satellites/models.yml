@@ -9,243 +9,349 @@ models:
     description: Satellite table for Customer details, containing descriptive attributes and tracking changes over time in the Data Vault model
     columns:
       - name: customer_hk
+        data_type: binary(16)
         description: Hash key linking to the Customer Hub table, representing the unique business entity
       - name: customer_hashdiff
+        data_type: binary(16)
         description: Hash difference used to track and identify changes in customer attributes
       - name: customer_key
+        data_type: number(38,0)
         description: ''
       - name: name
+        data_type: varchar(25)
         description: ''
       - name: address
+        data_type: varchar(40)
         description: ''
       - name: nation_key
+        data_type: number(38,0)
         description: ''
       - name: phone
+        data_type: varchar(15)
         description: ''
       - name: account_balance
+        data_type: number(12,2)
         description: ''
       - name: market_segment
+        data_type: varchar(10)
         description: ''
       - name: comment
+        data_type: varchar(117)
         description: ''
       - name: nation_hk
+        data_type: binary(16)
         description: ''
       - name: customer_nation_lhk
+        data_type: binary(16)
         description: Link hash key connecting the customer to their associated nation
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: Timestamp indicating when this specific customer record version was loaded into the data vault
       - name: record_source
+        data_type: varchar(23)
         description: Source system or process that supplied this customer record version
 
   - name: sat_lineitem
     description: ''
     columns:
       - name: line_item_hk
+        data_type: binary(16)
         description: ''
       - name: line_item_hashdiff
+        data_type: binary(16)
         description: ''
       - name: orderkey
+        data_type: number(38,0)
         description: ''
       - name: partkey
+        data_type: number(38,0)
         description: ''
       - name: suppkey
+        data_type: number(38,0)
         description: ''
       - name: linenumber
+        data_type: number(38,0)
         description: ''
       - name: quantity
+        data_type: number(12,2)
         description: ''
       - name: extendedprice
+        data_type: number(12,2)
         description: ''
       - name: discount
+        data_type: number(12,2)
         description: ''
       - name: tax
+        data_type: number(12,2)
         description: ''
       - name: returnflag
+        data_type: varchar(1)
         description: ''
       - name: linestatus
+        data_type: varchar(1)
         description: ''
       - name: shipdate
+        data_type: date
         description: ''
       - name: commitdate
+        data_type: date
         description: ''
       - name: receiptdate
+        data_type: date
         description: ''
       - name: shipinstruct
+        data_type: varchar(25)
         description: ''
       - name: shipmode
+        data_type: varchar(10)
         description: ''
       - name: comment
+        data_type: varchar(44)
         description: ''
       - name: order_hk
+        data_type: binary(16)
         description: ''
       - name: part_hk
+        data_type: binary(16)
         description: ''
       - name: supplier_hk
+        data_type: binary(16)
         description: ''
       - name: line_item_lhk
+        data_type: binary(16)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: ''
       - name: record_source
+        data_type: varchar(23)
         description: ''
 
   - name: sat_nation
     description: ''
     columns:
       - name: nation_hk
+        data_type: binary(16)
         description: ''
       - name: nation_hashdiff
+        data_type: binary(16)
         description: ''
       - name: nation_key
+        data_type: number(38,0)
         description: ''
       - name: name
+        data_type: varchar(25)
         description: ''
       - name: region_key
+        data_type: number(38,0)
         description: ''
       - name: comment
+        data_type: varchar(152)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: ''
       - name: record_source
+        data_type: varchar(21)
         description: ''
 
   - name: sat_order
     description: ''
     columns:
       - name: order_hk
+        data_type: binary(16)
         description: ''
       - name: order_hashdiff
+        data_type: binary(16)
         description: ''
       - name: order_key
+        data_type: number(38,0)
         description: ''
       - name: customer_key
+        data_type: number(38,0)
         description: ''
       - name: order_status
+        data_type: varchar(1)
         description: ''
       - name: total_price
+        data_type: number(12,2)
         description: ''
       - name: order_date
+        data_type: date
         description: ''
       - name: order_priority
+        data_type: varchar(15)
         description: ''
       - name: clerk
+        data_type: varchar(15)
         description: ''
       - name: shippriority
+        data_type: number(38,0)
         description: ''
       - name: comment
+        data_type: varchar(79)
         description: ''
       - name: customer_hk
+        data_type: binary(16)
         description: ''
       - name: order_customer_lhk
+        data_type: binary(16)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: ''
       - name: record_source
+        data_type: varchar(20)
         description: ''
 
   - name: sat_part
     description: ''
     columns:
       - name: part_hk
+        data_type: binary(16)
         description: ''
       - name: part_hashdiff
+        data_type: binary(16)
         description: ''
       - name: part_key
+        data_type: number(38,0)
         description: ''
       - name: name
+        data_type: varchar(55)
         description: ''
       - name: manufacturer
+        data_type: varchar(25)
         description: ''
       - name: brand
+        data_type: varchar(10)
         description: ''
       - name: type
+        data_type: varchar(25)
         description: ''
       - name: size
+        data_type: number(38,0)
         description: ''
       - name: container
+        data_type: varchar(10)
         description: ''
       - name: retail_price
+        data_type: number(12,2)
         description: ''
       - name: comment
+        data_type: varchar(23)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: ''
       - name: record_source
+        data_type: varchar(19)
         description: ''
 
   - name: sat_partsupp
     description: ''
     columns:
       - name: part_supplier_hk
+        data_type: binary(16)
         description: ''
       - name: part_supplier_hashdiff
+        data_type: binary(16)
         description: ''
       - name: part_key
+        data_type: number(38,0)
         description: ''
       - name: supplier_key
+        data_type: number(38,0)
         description: ''
       - name: available_quantity
+        data_type: number(38,0)
         description: ''
       - name: supply_cost
+        data_type: number(12,2)
         description: ''
       - name: comment
+        data_type: varchar(199)
         description: ''
       - name: part_hk
+        data_type: binary(16)
         description: ''
       - name: supplier_hk
+        data_type: binary(16)
         description: ''
       - name: part_supplier_lhk
+        data_type: binary(16)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: ''
       - name: record_source
+        data_type: varchar(23)
         description: ''
 
   - name: sat_region
     description: ''
     columns:
       - name: region_hk
+        data_type: binary(16)
         description: ''
       - name: region_hashdiff
+        data_type: binary(16)
         description: ''
       - name: region_key
+        data_type: number(38,0)
         description: ''
       - name: name
+        data_type: varchar(25)
         description: ''
       - name: comment
+        data_type: varchar(152)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: ''
       - name: record_source
+        data_type: varchar(21)
         description: ''
 
   - name: sat_supplier
     description: ''
     columns:
       - name: supplier_hk
+        data_type: binary(16)
         description: ''
       - name: supplier_hashdiff
+        data_type: binary(16)
         description: ''
       - name: supplier_key
+        data_type: number(38,0)
         description: ''
       - name: name
+        data_type: varchar(25)
         description: ''
       - name: address
+        data_type: varchar(40)
         description: ''
       - name: nation_key
+        data_type: number(38,0)
         description: ''
       - name: phone
+        data_type: varchar(15)
         description: ''
       - name: account_balance
+        data_type: number(12,2)
         description: ''
       - name: comment
+        data_type: varchar(101)
         description: ''
       - name: nation_hk
+        data_type: binary(16)
         description: ''
       - name: supplier_nation_lhk
+        data_type: binary(16)
         description: ''
       - name: load_date
+        data_type: timestamp_ltz(9)
         description: ''
       - name: record_source
+        data_type: varchar(23)
         description: ''
 
